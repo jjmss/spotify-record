@@ -10,6 +10,11 @@
 
 First step is to create a new spotify application, you can do so from [your dashboard on spotify](https://developer.spotify.com/dashboard/applications)
 
+![Create an Spotify applciation](https://raw.githubusercontent.com/jjmss/spotify-record/master/images/create-spotify-app.png)
+
+When the application is created, you may want to whitelist a callback uri for the application to prevent unwanted access. You can do this by clicking "Edit Settings" and then entering the wanted uri (default http://localhost:3000).
+![Set Spotify application redirect uri](https://raw.githubusercontent.com/jjmss/spotify-record/master/images/set-redirect-uri.png)
+
 ---
 
 ### .env file
