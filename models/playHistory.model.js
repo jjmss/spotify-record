@@ -16,6 +16,19 @@ const PlayHistorySchema = new mongoose.Schema({
 			release_date: {
 				type: String,
 			},
+			images: [
+				{
+					height: {
+						type: Number,
+					},
+					width: {
+						type: Number,
+					},
+					url: {
+						type: String,
+					},
+				},
+			],
 		},
 		artists: [
 			{
@@ -39,7 +52,7 @@ const PlayHistorySchema = new mongoose.Schema({
 			required: true,
 		},
 		played_at: {
-			type: String,
+			type: Date,
 			required: true,
 		},
 		source: {

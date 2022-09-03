@@ -3,6 +3,7 @@ import express from "express";
 import { randomUUID } from "crypto";
 import fetch from "node-fetch";
 import mongoose from "mongoose";
+import SpotiftController from "./lib/spotify-controller.mjs";
 dotenv.config();
 const app = express();
 
@@ -18,6 +19,8 @@ mongoose.connect(process.env.MONGO_URI, {
 const mongodb = mongoose.connection;
 mongodb.on("error", (err) => console.error(err));
 mongodb.once("open", () => console.log(`Connected to MongoDB 🔥`));
+
+const spotifyController = new SpotiftController();
 
 app.get("/login", (req, res) => {
 	const state = randomUUID();
@@ -72,6 +75,10 @@ app.get("/callback", async (req, res) => {
 		const response = await fetch(url, config);
 		const data = await response.json();
 
+		spotifyController.addClient({
+			access_token: data.access_token,
+		});
+
 		res.send({ data });
 	}
 });
@@ -102,6 +109,13 @@ app.get("/refresh_token", async (req, res) => {
 	const data = await response.json();
 
 	res.send({ data });
+});
+
+app.get("/status", (req, res) => {
+	const status = spotifyController.status();
+
+	console.log({ status });
+	res.json(status);
 });
 
 app.listen({ port: process.env.PORT }, () => {
