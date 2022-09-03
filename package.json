@@ -1,0 +1,22 @@
+{
+  "name": "spotify-record",
+  "version": "1.0.0",
+  "description": "Application that tracks playtime on spotify",
+  "main": "index.mjs",
+  "scripts": {
+    "dev": "nodemon index.mjs"
+  },
+  "author": "jjmss",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "mongoose": "^6.5.4",
+    "node-fetch": "^3.2.10",
+    "spotify-web-api-node": "^5.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
