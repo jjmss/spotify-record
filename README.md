@@ -1,6 +1,6 @@
 # Spotify record
 
-> **NOTE: This project is under development is not production ready!**
+> **NOTE: This project is under development and is not production ready!**
 
 ## How it works
 
