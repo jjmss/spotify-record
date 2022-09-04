@@ -86,7 +86,7 @@ app.get("/callback", async (req, res) => {
 			client_id: user.id,
 		});
 
-		res.redirect(`/status?client=${user.id}`);
+		res.redirect(`/worker/${user.id}`);
 	}
 });
 
@@ -115,7 +115,7 @@ app.get("/refresh_token", async (req, res) => {
 });
 
 app.get("/status", (req, res) => {
-	const status = spotifyController.status(req.query.client);
+	const status = spotifyController.status();
 
 	res.json(status);
 });
@@ -123,23 +123,23 @@ app.get("/status", (req, res) => {
 /**
  * Worker controls routes
  */
-app.get("/worker/:id", (req, res) => {
+app.get("/worker/:id", async (req, res) => {
 	const workerId = req.params["id"];
-	const status = spotifyController.status(workerId);
+	const status = await spotifyController.status(workerId);
 	res.json(status);
 });
-app.get("/worker/:id/pause", (req, res) => {
+app.get("/worker/:id/pause", async (req, res) => {
 	const workerId = req.params["id"];
 	spotifyController.pauseWorker(workerId);
 
-	const status = spotifyController.status(workerId);
+	const status = await spotifyController.status(workerId);
 	res.json(status);
 });
-app.get("/worker/:id/resume", (req, res) => {
+app.get("/worker/:id/resume", async (req, res) => {
 	const workerId = req.params["id"];
 	spotifyController.resumeWorker(workerId);
 
-	const status = spotifyController.status(workerId);
+	const status = await spotifyController.status(workerId);
 	res.json(status);
 });
 

@@ -5,6 +5,7 @@
   "main": "index.mjs",
   "scripts": {
     "dev": "nodemon index.mjs",
+    "devTest": "nodemon test/index.mjs",
     "start": "node index.mjs"
   },
   "author": "jjmss",
