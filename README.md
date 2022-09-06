@@ -16,7 +16,7 @@ First step is to create a new spotify application, you can do so from [your dash
 
 ![Create an Spotify applciation](https://raw.githubusercontent.com/jjmss/spotify-record/master/images/create-spotify-app.png)
 
-When the application is created, you may want to whitelist a callback uri for the application to prevent unwanted access. You can do this by clicking "Edit Settings" and then entering the wanted uri (default http://localhost:3000).
+When the application is created, you may want to whitelist a callback uri for the application to prevent unwanted access. You can do this by clicking "Edit Settings" and then entering the wanted uri (default http://localhost:3000/callback).
 ![Set Spotify application redirect uri](https://raw.githubusercontent.com/jjmss/spotify-record/master/images/set-redirect-uri.png)
 
 ---
@@ -28,17 +28,20 @@ To run this project, you will need to add the following environment variables to
 | Variable                | Description                                                                                                |
 | :---------------------- | :--------------------------------------------------------------------------------------------------------- |
 | `PORT`                  | The port to run the server on                                                                              |
+| `CALLBACK_URL`          | The callback url defined in the Spotify application                                                        |
 | `SPOTIFY_CLIENT_ID`     | The client id is the id of the spotify application found in your dashboard                                 |
 | `SPOTIFY_CLIENT_SECRET` | The secret is displayed after clicking _SHOW CLIENT SECRET_ below the client id on the spotify application |
 | `MONGO_URI`             | The mongodb connection uri, this is used to store the the users playhistory                                |
+| `JWT_SECRET`            | The secret to hash the jwt token with                                                                      |
+| `TOKEN_SECRET`          | the secret to hash the access and refresh token in the database with                                       |
 
 ## How to use
 
 ### Connect to the application
 
-As of this state of the project, after you have started the appliation you can go to the following path
+As of this state of the project, after you have started the appliation you can go to the following path. From here you wil receive a cookie `__userToken` including a jwt token allowing you to see the status of your own worker/user
 
-```http
+```
 http://localhost:3000/login
 ```
 
@@ -47,7 +50,7 @@ http://localhost:3000/login
 You should then be able to see the status of the current user/worker by the following path
 
 ```http
-http://localhost:3000/worker/<userid>
+GET http://localhost:3000/worker/<userid>
 ```
 
 ### Actions to the user/worker
@@ -55,8 +58,8 @@ http://localhost:3000/worker/<userid>
 If needed, you are able to resume or pause the user/worker from running
 
 ```http
-http://localhost:3000/worker/<userid>/pause
-http://localhost:3000/worker/<userid>/resume
+GET http://localhost:3000/worker/<userid>/pause
+GET http://localhost:3000/worker/<userid>/resume
 ```
 
 ## License
