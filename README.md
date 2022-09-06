@@ -50,7 +50,7 @@ http://localhost:3000/login
 You should then be able to see the status of the current user/worker by the following path
 
 ```http
-GET http://localhost:3000/worker/<userid>
+GET /worker/<userid>
 ```
 
 ### Actions to the user/worker
@@ -58,8 +58,8 @@ GET http://localhost:3000/worker/<userid>
 If needed, you are able to resume or pause the user/worker from running
 
 ```http
-GET http://localhost:3000/worker/<userid>/pause
-GET http://localhost:3000/worker/<userid>/resume
+GET /worker/<userid>/pause
+GET /worker/<userid>/resume
 ```
 
 ## License
