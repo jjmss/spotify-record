@@ -87,11 +87,13 @@ app.get("/callback", async (req, res) => {
 
 			const response = await fetch(url, config);
 
+			console.log({ response });
 			if (response.status !== 200) {
 				throw response;
 			}
 
 			const data = await response.json();
+			console.log({ data });
 
 			/**
 			 * @link https://developer.spotify.com/documentation/web-api/reference/#/operations/get-current-users-profile
@@ -106,6 +108,8 @@ app.get("/callback", async (req, res) => {
 					},
 				}
 			);
+
+			console.log({ user });
 
 			// Check if the user exists in the database
 			const userExists = await User.findOne({
