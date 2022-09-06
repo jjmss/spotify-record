@@ -86,6 +86,11 @@ app.get("/callback", async (req, res) => {
 			};
 
 			const response = await fetch(url, config);
+
+			if (response.status !== 200) {
+				throw response;
+			}
+
 			const data = await response.json();
 
 			/**
