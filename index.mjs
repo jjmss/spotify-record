@@ -68,83 +68,83 @@ app.get("/callback", async (req, res) => {
 	if (state === null) {
 		res.redirect(`/#${gParams({ error: "state_mismatch" })}`);
 	} else {
-		const url = `https://accounts.spotify.com/api/token?${gParams({
-			code: code,
-			redirect_uri: redirect_uri,
-			grant_type: "authorization_code",
-		})}`;
+		try {
+			const url = `https://accounts.spotify.com/api/token?${gParams({
+				code: code,
+				redirect_uri: redirect_uri,
+				grant_type: "authorization_code",
+			})}`;
 
-		const config = {
-			method: "post",
-			headers: {
-				Authorization: `Basic ${new Buffer.from(`${client_id}:${client_secret}`).toString(
-					"base64"
-				)}`,
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-		};
-
-		const response = await fetch(url, config);
-		const data = await response.json();
-
-		console.log(data);
-
-		/**
-		 * @link https://developer.spotify.com/documentation/web-api/reference/#/operations/get-current-users-profile
-		 */
-		const user = await spotifyRequest.request(
-			"/me",
-			{},
-			{
-				method: "GET",
+			const config = {
+				method: "post",
 				headers: {
-					Authorization: `${data.token_type} ${data.access_token}`,
+					Authorization: `Basic ${new Buffer.from(
+						`${client_id}:${client_secret}`
+					).toString("base64")}`,
+					"Content-Type": "application/x-www-form-urlencoded",
 				},
+			};
+
+			const response = await fetch(url, config);
+			const data = await response.json();
+
+			/**
+			 * @link https://developer.spotify.com/documentation/web-api/reference/#/operations/get-current-users-profile
+			 */
+			const user = await spotifyRequest.request(
+				"/me",
+				{},
+				{
+					method: "GET",
+					headers: {
+						Authorization: `${data.token_type} ${data.access_token}`,
+					},
+				}
+			);
+
+			// Check if the user exists in the database
+			const userExists = await User.findOne({
+				user: user.id,
+			});
+
+			if (!userExists) {
+				try {
+					const newUser = await User.create({
+						user: user.id,
+						email: user.email,
+						country: user.country,
+						uri: user.uri,
+						access_token: encodeToken(data.access_token),
+						refresh_token: encodeToken(data.refresh_token),
+						token_type: data.token_type,
+					});
+					await newUser.save();
+				} catch (err) {
+					console.log({ err });
+				}
 			}
-		);
 
-		console.log(user);
-
-		// Check if the user exists in the database
-		const userExists = await User.findOne({
-			user: user.id,
-		});
-
-		if (!userExists) {
-			try {
-				const newUser = await User.create({
-					user: user.id,
-					email: user.email,
-					country: user.country,
-					uri: user.uri,
-					access_token: encodeToken(data.access_token),
-					refresh_token: encodeToken(data.refresh_token),
-					token_type: data.token_type,
-				});
-				await newUser.save();
-			} catch (err) {
-				console.log({ err });
-			}
-		}
-
-		spotifyController.addWorker({
-			...data,
-			client_id: user.id,
-		});
-
-		const token = jwt.sign(
-			{
+			spotifyController.addWorker({
+				...data,
 				client_id: user.id,
-			},
-			process.env.JWT_SECRET,
-			{ expiresIn: "30m" }
-		);
+			});
 
-		res.cookie("__userToken", token, {
-			maxAge: 36000,
-		});
+			const token = jwt.sign(
+				{
+					client_id: user.id,
+				},
+				process.env.JWT_SECRET,
+				{ expiresIn: "30m" }
+			);
 
-		res.redirect(`/worker/${user.id}`);
+			res.cookie("__userToken", token, {
+				maxAge: 36000,
+			});
+
+			res.redirect(`/worker/${user.id}`);
+		} catch (err) {
+			res.json(err);
+		}
 	}
 });
 
