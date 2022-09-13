@@ -9,9 +9,14 @@ import { gParams } from "./lib/utils.mjs";
 import User from "./models/user.model.mjs";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
+import cors from "cors";
 import { authenticateClientId, encodeToken, decryptToken } from "./utils.mjs";
+import bodyParser from "body-parser";
 dotenv.config();
 const app = express();
+
+app.use(cors());
+app.use(bodyParser.json());
 
 // Enable cookies
 app.use(cookieParser());
@@ -209,6 +214,23 @@ app.get("/worker/:id/resume", authenticateClientId, async (req, res) => {
 
 	const status = await spotifyController.status(workerId);
 	res.json(status);
+});
+
+/**
+ * Webhook for adding a worker to the controller (used to check for music)
+ * @since 1.1.1
+ */
+app.post("/worker", async (req, res) => {
+	const token = req.body.token;
+
+	try {
+		const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+		spotifyController.addWorker(decodedToken);
+		res.status(200).end();
+	} catch (err) {
+		console.log("webhook token not valid", err);
+	}
+	res.status(400).end();
 });
 
 app.listen({ port: process.env.PORT }, () => {
