@@ -38,25 +38,3 @@ export const authenticateClientId = (req, res, next) => {
 
 	next();
 };
-
-/**
- * @TODO fix encoding
- * Encode the token
- *
- * @param {String} token
- * @returns
- */
-export const encodeToken = (token) => {
-	return token;
-};
-
-/**
- * @TODO fix decoding
- * Decode the token
- *
- * @param {String} token
- * @returns
- */
-export const decryptToken = (token) => {
-	return token;
-};

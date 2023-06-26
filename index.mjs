@@ -10,7 +10,8 @@ import User from "./models/user.model.mjs";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import cors from "cors";
-import { authenticateClientId, encodeToken, decryptToken } from "./utils.mjs";
+import { authenticateClientId } from "./utils.mjs";
+import { encryptToken, decryptToken } from "./utils/encryption.mjs";
 import bodyParser from "body-parser";
 dotenv.config();
 const app = express();
@@ -128,8 +129,8 @@ app.get("/callback", async (req, res) => {
 						email: user.email,
 						country: user.country,
 						uri: user.uri,
-						access_token: encodeToken(data.access_token),
-						refresh_token: encodeToken(data.refresh_token),
+						access_token: encryptToken(data.access_token),
+						refresh_token: encryptToken(data.refresh_token),
 						token_type: data.token_type,
 					});
 					await newUser.save();
@@ -201,6 +202,7 @@ app.get("/worker/:id", authenticateClientId, async (req, res) => {
 	const status = await spotifyController.status(workerId);
 	res.json(status);
 });
+
 app.get("/worker/:id/pause", authenticateClientId, async (req, res) => {
 	const workerId = req.params["id"];
 	spotifyController.pauseWorker(workerId);
@@ -208,6 +210,7 @@ app.get("/worker/:id/pause", authenticateClientId, async (req, res) => {
 	const status = await spotifyController.status(workerId);
 	res.json(status);
 });
+
 app.get("/worker/:id/resume", authenticateClientId, async (req, res) => {
 	const workerId = req.params["id"];
 	spotifyController.resumeWorker(workerId);
